@@ -1,0 +1,20 @@
+1. Team Information
+1.1 Team Name Misfits
+1.2 Team Member Semih Energin
+Richard Michael Boyle Ryan Jones
+Jian Bao
+2. Development Process
+se2302 rmb2189 rlj2122 jb3381
+Development Document
+The development process for team Misfits started with initial planning stage, where form and function of the design were first explored.
+As a first step, we attempted to carefully look at the assignment guidelines, and to understand our requirements and constraints. One important design decision made at this
+point was to see the Facebook search bar as a tool which should be enhanced and not replaced. Rejecting the search bar completely would disregard one of the most common actions a Facebook user performs. At this point we considered how to describe the core of the search bar.
+In considering Facebook search, we realize that it is a node-centric mechanism by which user leap to distant parts of the Facebook graph. The power and simplicity of this tool is it’s rejection of edge viewing and traversal. Node’s are found and viewed based solely upon their own data. With this in mind, we realized our goal would be to more comprehensively welcome nodes into the search mechanism to enhance the way the results can be viewed and compared- more nodes available, more data per node.
+This theme guided our critique of Facebook’s current search. One weakness we saw is the small number of results displayed. While this implementation is sufficient for your average Facebook website user, it is insufficient for our power-user target audience. The linear vertical orientation keeps results from using the whole space of the window, while pagination allows for only a small number of items to displayed without a new request for more. Also, extended information is provided either through links or hover-enabled windows. This increases the difficulty and time cost of comparing node information.
+With these problems in mind, we shifted to the design phase and started sketching prospective solutions as a group. After sketching and evaluation, we decided upon our core initial design of a coverflow results viewer combined with a space for viewing more information. This point in time marked a shift in division of responsibilities that would consists for the duration of the project. At the highest level, coding tasks were separated from non-coding
+tasks. One of the four team members had very little coding experience, he generally took responsibilities for early non-coding tasks. Coding tasks were generally divided by different GUI component. These were later compiled together to make the full application. Semih worked on the coverflow component, Ryan worked on the search component, Richard worked on the more information component, and Jian worked on the lists.
+3. Target users
+Since our application serves as a general purpose enhancement to Facebook search, almost any current user of Facebook holds a potential for interest. Searching is so important to Facebook because it allows people to jump to distant nodes without traversing the edge path. Our version of search maintains this focus of “nodes are king”, as it is a familiar concept to users.
+In this light, the target user is your average Facebook user: a web-savvy computer user who understands the social media sphere and has both the aptitude and the desire to navigate its treacherous pathways. Even a clumsy web user can feel safe using our app, as none of the potentially hazardous input fields of the online version are present.
+The form factor of this app is a windowed desktop application on a personal computer. Because of the extensive audience of our app, we can generalize our average user as the mainstream Facebook user, and assume an age range from 14 to 50 of either gender as well
+as proficiency in written English. We will assume full mental and physical faculty, and a broadband equivalent Internet connection.
