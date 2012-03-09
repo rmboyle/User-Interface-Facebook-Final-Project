@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="580" height="92" autoDrawBackground="false">
+	<fx:Script>
+		<![CDATA[
+			import com.facebook.graph.utils.FacebookDataUtils;
+		]]>
+	</fx:Script>
+	
+	
+	<s:Label id="locationData" x="87" y="48" width="270" height="30" text="{toCheck(data.location,80)}"/>
+	<s:Label id="locationLabel" x="10" y="48" text="Location: " fontWeight="bold"/>
+	<s:Label id="bioData" x="87" y="10" width="270" height="30" text="{toCheck(data.description,80)}"/>
+	<s:Label id="descriptionLabel" x="10" y="10" text="Description:" fontWeight="bold"/>
+	<s:Label id="educationData" x="422" y="10" width="148" height="30" text="{toCheckDate(data.start_time)}"/>
+	<s:Label id="startLabel" x="367" y="10" text="Start: " fontWeight="bold"/>
+	<s:Label id="workData" x="422" y="48" width="148" height="30" text="{toCheckDate(data.end_time)}"/>
+	<s:Label id="endLabel" x="367" y="48" text="End: " fontWeight="bold"/>
+	<fx:Script>
+		<![CDATA[
+			protected function toCheck(toCheck:String, length:int):String{
+				if(!toCheck || toCheck=="")
+					return "N/A";
+				else if(toCheck.length>=length){
+					return toCheck.substr(0,length-3)+'...';
+				}
+				return toCheck;
+				
+			}
+			protected function toCheckDate(toCheck:String):String{
+				if(!toCheck || toCheck=="")
+					return "N/A";
+				else
+					return (toCheck).substr(11,5)+', '+(toCheck).substr(5,2)+'.'+(toCheck).substr(8,2)+'.'+(toCheck).substr(0,4)
+			}
+		]]></fx:Script>
+</s:ItemRenderer>

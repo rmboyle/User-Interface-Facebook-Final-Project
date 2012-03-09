@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="580" height="92" autoDrawBackground="false">
+
+	
+	<s:Label id="locationData" x="67" y="50" width="96" height="35" text="{toCheck(data.location.name,30)}"/>
+	<s:Label id="locationLabel" x="10" y="50" text="Location: " fontWeight="bold"/>
+	<s:Label id="bioData" x="223" y="50" width="136" height="35" text="{toCheck(data.bio,30)}"/>
+	<s:Label id="bioLabel" x="171" y="50" text="Bio: " fontWeight="bold"/>
+	<s:Label id="birthdayData" x="241" y="10" width="100" height="30" text="{toCheck(data.birthday,30)}"/>
+	<s:Label id="birthdayLabel" x="171" y="11" text="Birthday: " fontWeight="bold"/>
+	<s:Label id="genderData" x="62" y="10" width="81" height="30" text="{toCheck(data.gender,30)}"/>
+	<s:Label id="genderLabel" x="10" y="10" height="18" text="Gender: " fontWeight="bold"/>
+	<s:Label id="educationData" x="457" y="10" width="113" height="30" text="{toCheck(data.education[data.education.length-1].school.name,30)}"/>
+	<s:Label id="educationLabel" x="367" y="10" text="Education: " fontWeight="bold"/>
+	<s:Label id="workData" x="457" y="50" width="113" height="35" text="{toCheck(data.work[0].employer.name,30)}"/>
+	<s:Label id="workLabel" x="367" y="50" text="Work: " fontWeight="bold"/>
+	<fx:Script>
+		<![CDATA[
+			protected function toCheck(toCheck:String, length:int):String{
+				if(!toCheck || toCheck=="")
+					return "N/A";
+				else if(toCheck.length>=length){
+					return toCheck.substr(0,length-3)+'...';
+				}
+				return toCheck;
+				
+			}
+		]]></fx:Script>
+</s:ItemRenderer>

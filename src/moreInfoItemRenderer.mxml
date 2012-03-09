@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				width="269" height="220" autoDrawBackground="false">
+	
+	<s:Label id="hometownData" x="92" y="34" width="172" height="25" text="{toCheck(data.hometown.name,30)}"/>
+	<s:Label id="hometownLabel" x="5" y="34" height="25" text="Hometown: "/>
+	<s:Label id="politicalData" x="92" y="63" width="172" height="25" text="{toCheck(data.political,30)}"/>
+	<s:Label id="politicalLabel" x="5" y="63" height="25" text="Political View: "/>
+	<s:Label id="relationshipData" x="122" y="10" width="147" height="25" text="{toCheck(data.relationship_status,30)}"/>
+	<s:Label id="relationshipLabel" x="5" y="10" height="25" text="Relationship Status: "/>
+	<s:Label id="quotesData" x="92" y="87" width="177" height="25" text="{toCheck(data.quotes,30)}"/>
+	<s:Label id="quotesLabel" x="5" y="87" height="25" text="Quotes: "/>
+	<s:Label id="religionData" x="92" y="118" width="177" height="25" text="{toCheck(data.religion,30)}"/>
+	<s:Label id="religionLabel" x="5" y="118" height="25" text="Religion: "/>
+	<s:Label id="websiteData" x="92" y="151" width="177" height="25" text="{toCheck(data.website,30)}"/>
+	<s:Label id="websiteLabel" x="5" y="151" height="25" text="Website: "/>
+	<s:Label id="emailData" x="92" y="184" width="177" height="25" text="{toCheck(data.email,30)}"/>
+	<s:Label id="emailLabel" x="5" y="184" height="25" text="Email: "/>
+	<fx:Script>
+		<![CDATA[
+			protected function toCheck(toCheck:String, length:int):String{
+				if(!toCheck || toCheck=="")
+					return "N/A";
+				else if(toCheck.length>=length){
+					return toCheck.substr(0,length-3)+'...';
+				}
+				return toCheck;
+				
+			}
+		]]></fx:Script>
+</s:ItemRenderer>

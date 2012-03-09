@@ -1,0 +1,1386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:containers="com.dougmccune.containers.*"
+					   xmlns:local="*"
+					   minWidth="800" minHeight="640"
+					   maxWidth="800" maxHeight="640"
+					   width="800" height="640"
+					   showStatusBar="false"
+					   status=""
+					   title="Facebook Search++"
+					   creationComplete="creationCompleteHandler(event)"
+					   applicationComplete="registerGlobalKeyHandler()">
+	
+	<s:states>
+		<s:State name="loggedout"/>
+		<s:State name="loggedin"/>
+	</s:states>
+	
+	<s:Image id="mainMenuBackground" includeIn="loggedout" x="0" y="0"
+			 source="@Embed('../images/mainMenuBackground.png')"/>
+	
+	<s:Button id="loginButton"
+			  includeIn="loggedout"
+			  x.loggedout="311" y.loggedout="320" width.loggedout="178" height.loggedout="44"
+			  label.loggedout="Log in" click.loggedout="login()"
+			  icon.loggedout="@Embed(source='images/fblogin.gif')"/>
+	
+	<s:BorderContainer id="mainContainer" includeIn="loggedin" 
+					   top="226" left="0" width="665" height="570"
+					   borderVisible="false">
+		
+		<s:Image id="drawerBackgroundImage" includeIn="loggedin" 
+				 left="0" bottom="0"
+				 source="@Embed('../images/drawerBackground.png')"/>
+		
+		<s:Group id="shelfFrame"
+				 includeIn="loggedin"
+				 clipAndEnableScrolling="true"
+				 left="15" top="-78" width="640" height="280">
+			
+			<s:Image id="noResultImage" left="142" top="80" width="350" height="120"
+					 visible="false"
+					 source="@Embed('../images/noResult.png')"/>
+			
+			<s:Image id="loading1Image" left="142" top="80" width="350" height="120"
+					 visible="false"
+					 source="@Embed('../images/loading1.png')"/>
+			
+			<s:Image id="loading2Image" left="142" top="80" width="350" height="120"
+					 visible="false"
+					 source="@Embed('../images/loading2.png')"/>
+			
+			<s:Image id="loading3Image" left="142" top="80" width="350" height="120"
+					 visible="false"
+					 source="@Embed('../images/loading3.png')"/>
+			
+			<local:DisplayShelf id="profileShelf" visible="false" left="0" top="10" width="645"
+								height="200" borderColor="#3B5998" borderThickness="0"
+								dataProvider="{profileURLArrayCollection}" enabled="false"
+								enableHistory="false" mouseEnabled="false">
+			</local:DisplayShelf>
+			
+			<local:DisplayShelf id="resultShelf" visible="false" left="0" top="10" width="645" 
+								height="200" borderColor="#3B5998" borderThickness="0"
+								dataProvider="{resultURLArrayCollection}" enabled="false"
+								enableHistory="false" mouseEnabled="false">
+			</local:DisplayShelf>
+			
+			<local:DisplayShelf id="bucketShelf" visible="false" left="0" top="10" width="645"
+								height="200" borderColor="#3B5998" borderThickness="0"
+								dataProvider="{bucketURLArrayCollection}" enabled="false"
+								enableHistory="false" mouseEnabled="false">
+			</local:DisplayShelf>
+			
+		</s:Group>
+		
+		<s:Image id="drawerDownImage" includeIn="loggedin" left="230" bottom="280" width="205" height="30" 
+				 visible="false" enabled="false" mouseEnabled="false"
+				 source="@Embed('../images/drawerDown.png')"
+				 click="drawerDownImageClickHandler(event)"/>
+		
+		<s:Image id="drawerUpImage" includeIn="loggedin" left="230" bottom="280" width="205" height="30" 
+				 visible="true" enabled="true" mouseEnabled="true"
+				 source="@Embed('../images/drawerUp.png')"
+				 click="drawerUpImageClickHandler(event)"/>
+		
+		<s:Image id="drawerMovingImage" includeIn="loggedin" left="230" bottom="280" width="205" height="30" 
+				 visible="false" enabled="false" mouseEnabled="false"
+				 source="@Embed('../images/drawerMoving.png')"/>
+		
+		<s:Label id="selectedNameLabel" includeIn="loggedin"
+				 top="212" left="10" width="645"
+				 backgroundColor="#FFFFFF"
+				 backgroundAlpha="0.0"
+				 fontFamily="Verdana" 
+				 fontWeight="bold"
+				 fontSize="25" textAlign="center" verticalAlign="top"/>
+		
+		<s:BorderContainer id="infoContainer" includeIn="loggedin" left="10" bottom="10" 
+						   width="645" height="270">
+			<s:Label id="moreGroupLabel" x="22" y="130" width="55" height="14"
+					 visible = "false" enabled="false" fontWeight="bold" text="Members">
+			</s:Label> 
+			<s:Label id="moreEventLabel" x="22" y="130" width="58" height="14"
+					 visible = "false" enabled="false" fontWeight="bold" text="Attending">
+				
+			</s:Label>
+			<s:Label id="recentPostLabel" x="322" y="130" width="55" height="14"
+					  fontWeight="bold" text="Recent Posts" visible="false">
+			</s:Label>
+			<s:Label id="recentPagePostLabel" x="180" y="130" width="55" height="14"
+					  fontWeight="bold" text="Recent Posts" visible="false">
+			</s:Label>
+			<s:List id="basicUserInfoList" x="22" y="10" width="600" height="100"
+					dataProvider="{basicInfoArrayCollection}" itemRenderer="basicPeopleInfoItemRenderer" visible="false" mouseEnabled="false"></s:List>
+			<s:List id="basicEventInfoList"  x="22" y="10" width="600" height="100"
+					dataProvider="{basicInfoArrayCollection}" itemRenderer="basicEventInfoItemRenderer" visible="false" mouseEnabled="false"></s:List>
+			<s:List id="basicGroupInfoList"  x="22" y="10" width="600" height="100"
+					dataProvider="{basicInfoArrayCollection}" itemRenderer="basicGroupInfoItemRenderer" visible="false" mouseEnabled="false"></s:List>
+			<s:List id="basicPageInfoList" x="22" y="10" width="600" height="100"
+					dataProvider="{basicInfoArrayCollection}" itemRenderer="basicPageInfoItemRenderer" visible="false" mouseEnabled="false"></s:List>
+			<s:List id="moreUserInfoList" x="22" y="150" width="290" height="115"
+					dataProvider="{moreInfoArrayCollection}" itemRenderer="moreInfoItemRenderer" visible="false"  ></s:List>
+			<s:List id="userPostList" x="322" y="150" width="290" height="115"
+					dataProvider="{recentPostsArrayCollection}" labelField="story"  visible="false"  ></s:List>
+			<s:List id="pagePostList" x="180" y="150" width="290" height="115"
+					dataProvider="{recentPostsArrayCollection}" labelField="message"   visible="false"  ></s:List>
+			<s:List id="eventPostList" x="322" y="150" width="290" height="115"
+					dataProvider="{recentPostsArrayCollection}" labelField="message"  visible="false"  ></s:List>
+			<s:List id="groupPostList" x="322" y="150" width="290" height="115"
+					dataProvider="{recentPostsArrayCollection}" labelField="message"  visible="false"  ></s:List>
+			<s:List id="moreEventInfoList" x="22" y="150" width="290" height="115"
+					dataProvider="{moreInfoPeopleArrayCollection}" visible="false" labelField="name"></s:List>
+			<s:List id="moreGroupInfoList" x="22" y="150" width="290" height="115"
+					dataProvider="{moreInfoPeopleArrayCollection}" visible="false"  labelField="name"></s:List>
+		</s:BorderContainer>
+		
+		<s:Button id="openBrowserButton" 
+				  left="10" bottom="300" height="18" 
+				  label="Open in Browser"
+				  visible="false"
+				  click="openBrowserButtonClickHandler(event)"/>
+		
+		<s:Button id="toggleBucketButton" 
+				  right="10" bottom="300" height="18"
+				  visible="false"
+				  label="Add to Bookmarks" 
+				  click="toggleBucketButtonClickHandler(event)"/>
+		
+	</s:BorderContainer>
+	
+	<s:BorderContainer id="topContainer" includeIn="loggedin"
+					   backgroundColor="#3B5998"
+					   left="0" top="0" width="800" height="70">
+		
+		<s:Button id="logoutButton" right="0" top="0" width="55" height="20" label="Log out"
+				  click="logout()" icon="@Embed(source='images/fblogout.gif')"/>
+		
+		<s:BorderContainer id="profileContainer" right="0" top="20" width="55" height="48"
+						   backgroundColor="#3B5998" click="profileContainerClickHandler(event)"
+						   contentBackgroundColor="#FFFFFF">
+			<s:Image id="profileImage" right="0" top="0" width="55" height="48"
+					 backgroundColor="#3B5998" scaleMode="stretch">
+			</s:Image>
+		</s:BorderContainer>
+		<s:TextInput id="searchbar" left="30" top="10" width="300" height="35"
+					 change="searchbarChangeHandler(event)" enabled="true"
+					 focusIn="searchbarFocusInHandler(event)"
+					 focusOut="searchbarFocusOutHandler(event)" text="Search"/>
+		<s:Image id="peopleButton" left="32" top="45" width="70" height="25"
+				  buttonMode="true" click="peopleButtonClickHandler(event)" 
+				  source="@Embed('../images/people.png')"/>
+		<s:Image id="pageButton" left="107" top="45" width="70" height="25"
+				 buttonMode="true" click="pageButtonClickHandler(event)" 
+				  source="@Embed('../images/pages.png')"/>
+		<s:Image id="groupButton" left="182" top="45" width="70" height="25"
+				 buttonMode="true" click="groupButtonClickHandler(event)" 
+				  source="@Embed('../images/group.png')"/>
+		<s:Image id="eventButton" left="257" top="45" width="70" height="25"
+				 buttonMode="true" click="eventButtonClickHandler(event)" 
+				  source="@Embed('../images/events.png')"/>
+		<s:Button id="helpButton" x="685" y="24" width="36" label="?"
+				  click="helpButton_clickHandler(event)"/>
+		
+	</s:BorderContainer>
+	
+	<s:Label id="resultsLabel" includeIn="loggedin" x="675" y="70" width="125" height="30"
+			 fontFamily="Verdana" fontSize="16" fontWeight="normal" text="Search Results"
+			 textAlign="left" textDecoration="none" verticalAlign="bottom"/>
+	
+	<s:List id="resultList" includeIn="loggedin"
+			right="12" top="104"
+			width="115" height="300"
+			dataProvider="{resultArrayCollection}"
+			labelField="name"
+			click="resultListClickHandler(event)">
+	</s:List>
+	
+	<s:Label id="bucketLabel" includeIn="loggedin" x="675" y="400" width="125" height="30"
+			 fontFamily="Verdana" fontSize="16" fontWeight="normal" text="Bookmarks"
+			 textAlign="left" textDecoration="none" verticalAlign="bottom"/>
+	
+	<s:List id="bucketList" includeIn="loggedin"
+			right="10" bottom="10"
+			width="115" height="200"
+			dataProvider="{bucketArrayCollection}"
+			labelField="name"
+			click="bucketListClickHandler(event)">
+		
+	</s:List>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.facebook.graph.Facebook;
+			import com.facebook.graph.FacebookDesktop;
+			import com.facebook.graph.data.FacebookSession;
+			
+			import flash.net.navigateToURL;
+			import flash.system.fscommand;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.utils.OnDemandEventDispatcher;
+			
+			import org.myjerry.as3extensions.io.FileStreamWithLineReader;
+			
+			import spark.components.Application;
+			import spark.events.TextOperationEvent;
+			
+			//To ask permissions from Facebook while logging in
+			private var appPermissions:Array = ['friends_hometown','user_about_me','user_birthday',
+				'user_education_history','friends_education_history','user_likes','friends_about_me',
+				'user_relationship_details', 'friends_relationship_details','user_hometown',
+				'user_location','friends_location','friends_birthday','user_religion_politics', 
+				'user_relationships', 'friends_relationships','friends_religion_politics',
+				'user_website', 'friends_website','user_work_history', 'friends_work_history',
+				'user_events', 'friends_events',
+				'user_groups', 'friends_groups'];
+			
+			//List of all friends. Why? Who knows..
+			private var friendsArrayCollection:ArrayCollection = new ArrayCollection();
+			
+			//Lists that hold the whole information of the current values
+			[Bindable] private var profileURLArrayCollection:ArrayCollection = new ArrayCollection();
+			//All results returned from a search, in order
+			[Bindable] private var resultArrayCollection:ArrayCollection = new ArrayCollection();
+			[Bindable] private var resultURLArrayCollection:ArrayCollection = new ArrayCollection();
+			
+			//All... things contained in a bucket list atm, in order
+			[Bindable] private var bucketArrayCollection:ArrayCollection = new ArrayCollection();
+			[Bindable] private var bucketURLArrayCollection:ArrayCollection = new ArrayCollection();
+			
+			[Bindable] private var tmpResultArrayCollection:ArrayCollection = new ArrayCollection();
+			[Bindable] private var tmpURLArrayCollection:ArrayCollection = new ArrayCollection();
+			
+			//An image URL mapping utility
+			private var imageURLMap:Dictionary = new Dictionary();
+			private var selectedSource:int; //0=Profile, 1=Search Result, 2=Bucket, -1=NothingSelected (only when result was selected, then a search is submitted
+			private var selectedIndex:int = 0;
+			private const MaxResultSize:Number = 200;
+			
+			private var searchTextEntered:Boolean = false;
+			private var searchType:String = "all";
+			private var searchedOnce:Boolean = false;
+			private var loadingTimer:Timer = new Timer(1000);
+			private var drawerTimer:Timer = new Timer(1);
+			private const DefaultBucketFileName:String = "bucketList";
+			
+			//ID of the item on the highlight
+			private var selectedID:String;
+			private var isSelectedInBucket:Boolean;
+			private var isSelectedInBucketIndex:int;
+			private var selectedIDtype:String;
+			
+			//info stuff
+			[Bindable] private var basicInfoArrayCollection:ArrayCollection = new ArrayCollection();
+			[Bindable] private var moreInfoArrayCollection:ArrayCollection = new ArrayCollection();
+			[Bindable] private var moreInfoPeopleArrayCollection:ArrayCollection = new ArrayCollection();
+			[Bindable] private var recentPostsArrayCollection:ArrayCollection = new ArrayCollection();
+			
+			
+			protected function creationCompleteHandler(event:FlexEvent):void {
+				// center the window on the screen
+				var screenBounds:Rectangle = Screen.mainScreen.bounds;
+				nativeWindow.x = (screenBounds.width - nativeWindow.width) / 2;
+				nativeWindow.y = (screenBounds.height - nativeWindow.height) / 2;
+				FacebookDesktop.init("189400757820982", initializeHandler);
+			}
+			
+			protected function registerGlobalKeyHandler():void {
+				stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandle);
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandle);
+				stage.addEventListener(MouseEvent.CLICK, mouseClickHandle);
+			}		
+			
+			protected function profileContainerClickHandler(event:MouseEvent):void{
+				if(selectedSource==-1) {
+					noResultImage.visible = false;
+					loading1Image.visible = false;
+					loading2Image.visible = false;
+					loading3Image.visible = false;
+				}
+				selectedSource = 0;
+				selectedIndex = 0;
+				selectedID = FacebookDesktop.getSession().user.id;
+				selectedNameLabel.text = FacebookDesktop.getSession().user.name;
+				resultList.selectedIndex = -1;
+				bucketList.selectedIndex = -1
+				enableShelfBySource();
+				
+				manageInformationContainer();
+			}
+			
+			protected function resultListClickHandler(event:MouseEvent):void{
+				if(currentState=="loggedin") {
+					if(resultList != null && resultArrayCollection != null && resultList.selectedIndex != -1) {
+						if(resultArrayCollection.getItemAt(0).noResult) {
+							resultList.selectedIndex = -1;
+						}else if(resultArrayCollection.getItemAt(0).loading) {
+							resultList.selectedIndex = -1;
+						}else if(selectedSource != 1) {
+							selectedSource = 1;
+							selectedIndex = resultList.selectedIndex;
+							selectedID = resultArrayCollection.getItemAt(selectedIndex).id;
+							selectedNameLabel.text = resultArrayCollection.getItemAt(selectedIndex).name;
+							resultList.ensureIndexIsVisible(selectedIndex);
+							bucketList.selectedIndex = -1;
+							enableShelfBySource();
+						}else {
+							selectedIndex = resultList.selectedIndex;
+							selectedID = resultArrayCollection.getItemAt(selectedIndex).id;
+							selectedNameLabel.text = resultArrayCollection.getItemAt(selectedIndex).name;
+							resultShelf.selectedIndex = selectedIndex;
+							resultList.ensureIndexIsVisible(selectedIndex);
+						}
+					}
+				}
+				
+				manageInformationContainer();
+			}
+			
+			protected function bucketListClickHandler(event:MouseEvent):void{
+				if(currentState=="loggedin") {
+					if(bucketList != null && bucketArrayCollection != null && bucketList.selectedIndex != -1) {
+						if(bucketArrayCollection.getItemAt(0).noItem) {
+							bucketList.selectedIndex = -1;
+						}else if(selectedSource != 2) {
+							if(selectedSource==-1) {
+								noResultImage.visible = false;
+								loading1Image.visible = false;
+								loading2Image.visible = false;
+								loading3Image.visible = false;
+							}
+							selectedSource = 2;
+							selectedIndex = bucketList.selectedIndex;
+							selectedID = bucketArrayCollection.getItemAt(selectedIndex).id;
+							selectedNameLabel.text = bucketArrayCollection.getItemAt(selectedIndex).name;
+							bucketShelf.selectedIndex = selectedIndex;
+							bucketList.ensureIndexIsVisible(selectedIndex);
+							resultList.selectedIndex = -1;
+							enableShelfBySource();
+						} else {
+							selectedIndex = bucketList.selectedIndex;
+							selectedID = bucketArrayCollection.getItemAt(selectedIndex).id;
+							selectedNameLabel.text = bucketArrayCollection.getItemAt(selectedIndex).name;
+							bucketShelf.selectedIndex = selectedIndex;
+							bucketList.ensureIndexIsVisible(selectedIndex);
+						}
+					}
+					
+					manageInformationContainer();
+				}
+			}
+			
+			protected function keyUpHandle(event:KeyboardEvent):void {
+				if(event.keyCode == Keyboard.LEFT ||
+					event.keyCode == Keyboard.RIGHT ||
+					event.keyCode == Keyboard.UP ||
+					event.keyCode == Keyboard.DOWN )
+					synchronizeDisplay();
+			}
+			
+			protected function keyDownHandle(event:KeyboardEvent):void {
+				if(event.keyCode == Keyboard.LEFT ||
+					event.keyCode == Keyboard.RIGHT ||
+					event.keyCode == Keyboard.UP ||
+					event.keyCode == Keyboard.DOWN )
+					synchronizeDisplay();
+			}
+			
+			protected function mouseClickHandle(event:MouseEvent):void {
+				synchronizeDisplay();
+			}
+			
+			protected function synchronizeDisplay():void {
+				if(currentState=="loggedin") {
+					if(selectedSource == 1 && focusManager.getFocus() == resultShelf && resultShelf.selectedIndex != -1) {
+						selectedIndex = resultShelf.selectedIndex;
+						selectedID = resultArrayCollection.getItemAt(selectedIndex).id;
+						selectedNameLabel.text = resultArrayCollection.getItemAt(selectedIndex).name;
+						resultList.selectedIndex = selectedIndex;
+						resultList.ensureIndexIsVisible(selectedIndex);
+						manageInformationContainer();
+					} else if(selectedSource == 2 && focusManager.getFocus() == bucketShelf && bucketShelf.selectedIndex != -1) {
+						selectedIndex = bucketShelf.selectedIndex;
+						selectedID = bucketArrayCollection.getItemAt(selectedIndex).id;
+						selectedNameLabel.text = bucketArrayCollection.getItemAt(selectedIndex).name;
+						bucketList.selectedIndex = selectedIndex;
+						bucketList.ensureIndexIsVisible(selectedIndex);
+						manageInformationContainer();
+					}
+				}
+			}
+			
+			protected function login():void {
+				FacebookDesktop.login(loginHandler, appPermissions);
+			}
+			
+			protected function initializeHandler(success:FacebookSession,fail:Object):void {
+				if(fail) {
+					//TODO: Show an error
+				}
+			}
+			
+			protected function loginHandler(success:FacebookSession,fail:Object):void {
+				if(success) {
+					currentState = "loggedin";
+					profileImage.source=FacebookDesktop.getImageUrl(success.uid,"large");
+					//FacebookDesktop.api("/me/statuses",getStatusHandler);
+					//FacebookDesktop.api("/me/friends",getFriendsHandler);
+					startupScene();
+				}else {
+					Alert.show(fail.message, "Login unsuccessful", mx.controls.Alert.OK, this, loginFailAlertHandler);
+				}
+			}
+			
+			function loginFailAlertHandler(event:CloseEvent):void {
+				if(event.detail == Alert.OK) {
+					currentState = "loggedout";
+				}
+			}
+			
+			
+			protected function startupScene():void {
+				mainContainer.top = 226;
+				shelfFrame.top = -78;
+				drawerDownImage.visible = false;
+				drawerDownImage.enabled = false;
+				drawerDownImage.mouseEnabled = false;
+				drawerUpImage.visible = true;
+				drawerUpImage.enabled = true;
+				drawerUpImage.mouseEnabled = true;
+				drawerMovingImage.visible = false;
+				drawerMovingImage.enabled = false;
+				drawerMovingImage.mouseEnabled = false;
+				selectedSource = 0;
+				selectedIndex = 0;
+				selectedID = FacebookDesktop.getSession().user.id;
+				openBrowserButton.visible = true;
+				toggleBucketButton.visible = true;
+				selectedNameLabel.text = FacebookDesktop.getSession().user.name;
+				profileURLArrayCollection.removeAll();
+				if(!imageURLMap[FacebookDesktop.getSession().uid])
+					imageURLMap[FacebookDesktop.getSession().uid] = FacebookDesktop.getImageUrl(FacebookDesktop.getSession().uid,"large");
+				profileURLArrayCollection.addItem(imageURLMap[FacebookDesktop.getSession().uid]);
+				profileShelf.selectedIndex = 0;
+				
+				var noResultEntry:Object = new Object();
+				noResultEntry.name = "No result";
+				noResultEntry.noResult = true;
+				resultArrayCollection.addItem(noResultEntry);
+				
+				var noItemEntry:Object = new Object();
+				noItemEntry.name = "No item";
+				noItemEntry.noItem = true;
+				bucketArrayCollection.addItem(noItemEntry);
+				
+				enableShelfBySource();
+				manageInformationContainer();
+				
+				readBucketFromFile();
+				
+				loadingTimer.addEventListener(TimerEvent.TIMER, loadingUpdate);
+			}
+			
+			protected function enableShelfBySource():void {
+				switch(selectedSource) {
+					case 0: {
+						profileShelf.visible = true;
+						profileShelf.enabled = true;
+						profileShelf.mouseEnabled = true;
+						profileShelf.selectedIndex = selectedIndex;
+						resultShelf.visible = false;
+						resultShelf.enabled = false;
+						resultShelf.mouseEnabled = false;
+						bucketShelf.visible = false;
+						bucketShelf.enabled = false;
+						bucketShelf.mouseEnabled = false;
+						break;
+					}
+					case 1: {
+						profileShelf.visible = false;
+						profileShelf.enabled = false;
+						profileShelf.mouseEnabled = false;
+						resultShelf.visible = true;
+						resultShelf.enabled = true;
+						resultShelf.mouseEnabled = true;
+						resultShelf.selectedIndex = selectedIndex;
+						bucketShelf.visible = false;
+						bucketShelf.enabled = false;
+						bucketShelf.mouseEnabled = false;
+						break;
+					}
+					case 2: {
+						profileShelf.visible = false;
+						profileShelf.enabled = false;
+						profileShelf.mouseEnabled = false;
+						resultShelf.visible = false;
+						resultShelf.enabled = false;
+						resultShelf.mouseEnabled = false;
+						bucketShelf.visible = true;
+						bucketShelf.enabled = true;
+						bucketShelf.mouseEnabled = true;
+						bucketShelf.selectedIndex = selectedIndex;
+						break;
+					}
+					default:{
+						break;
+					}
+				}
+			}
+			
+			protected function getStatusHandler(success:Object,fail:Object):void {
+				
+			}
+			
+			protected function getFriendsHandler(success:Object,fail:Object):void {
+				if(success) {
+					friendsArrayCollection.removeAll();
+					for(var i:int;i<success.length;i++) {
+						if(success[i]) {
+							friendsArrayCollection.addItem(success[i]);
+						}
+					}
+				}
+			}
+			
+			protected function logout():void {
+				Alert.show("Do you realy want to logout?", "=(", mx.controls.Alert.YES | mx.controls.Alert.NO, this, alertEventHandler);
+			}
+			
+			protected function alertEventHandler(event:CloseEvent):void {
+				if(event.detail == Alert.YES) {
+					FacebookDesktop.logout(logoutHandler, null);
+				}
+			}
+			
+			
+			protected function logoutHandler(result:Boolean):void {
+				if(result) {
+					currentState = "loggedout";
+					resultArrayCollection = new ArrayCollection();
+					bucketArrayCollection = new ArrayCollection();
+					resultURLArrayCollection = new ArrayCollection();
+					bucketURLArrayCollection = new ArrayCollection();
+					tmpURLArrayCollection = new ArrayCollection();
+					tmpResultArrayCollection = new ArrayCollection;
+					friendsArrayCollection = new ArrayCollection();
+					noResultImage.visible = false;
+					loading1Image.visible = false;
+					loading2Image.visible = false;
+					loading3Image.visible = false;
+					selectedSource = 0;
+					selectedIndex = 0;
+					profileShelf.visible = false;
+					profileShelf.enabled = false;
+					profileShelf.mouseEnabled = false;
+					resultShelf.visible = false;
+					resultShelf.enabled = false;
+					resultShelf.mouseEnabled = false;
+					bucketShelf.visible = false;
+					bucketShelf.enabled = false;
+					bucketShelf.mouseEnabled = false;
+					searchbar.enabled = true;
+					searchbar.text = "Search";
+					//search.enabled = true;
+					//allButton.enabled = true;
+					peopleButton.enabled = true;
+					pageButton.enabled = true;
+					eventButton.enabled = true;
+					groupButton.enabled = true;
+					searchedOnce = false;
+					searchTextEntered = false;
+					selectedID = "-1";
+					manageInformationContainer();
+				}
+			}
+			
+			protected function searchClickHandler(event:MouseEvent):void {
+				submitSearch();
+			}
+			
+			protected function submitSearch():void {
+				if(!searchedOnce)
+					searchedOnce = true;
+				if(searchTextEntered){
+					
+					resultList.selectedIndex = -1;
+					resultArrayCollection.removeAll();
+					resultShelf.visible = false;
+					resultShelf.enabled = false;
+					resultShelf.mouseEnabled = false;
+					if(selectedSource == -1 || selectedSource == 1) {
+						noResultImage.visible = false;
+						loading1Image.visible = true;
+						loading2Image.visible = false;
+						loading3Image.visible = false;
+						selectedSource = -1;
+						selectedIndex = -1;
+						selectedID = "-1";
+						selectedNameLabel.text = "";
+						
+						manageInformationContainer();
+					}
+					
+					var loadingEntry:Object = new Object();
+					loadingEntry.name = "Loading.";
+					loadingEntry.loading = true;
+					resultArrayCollection.addItem(loadingEntry);
+					
+					loadingTimer.reset();
+					loadingTimer.start();
+					
+					searchbar.enabled = false;
+					//search.enabled = false;
+					//allButton.enabled = false;
+					peopleButton.enabled = false;
+					pageButton.enabled = false;
+					eventButton.enabled = false;
+					groupButton.enabled = false;
+					
+					switch(searchType){
+						case "all":
+							FacebookDesktop.api("/search?q="+searchbar.text+"&", getResults);
+							break;
+						case "user":
+							FacebookDesktop.api("/search?q="+searchbar.text+"&type=user&", getResults);
+							break;
+						case "page":
+							FacebookDesktop.api("/search?q="+searchbar.text+"&type=page&", getResults);
+							break;
+						case "event":
+							FacebookDesktop.api("/search?q="+searchbar.text+"&type=event&", getResults);
+							break;
+						case "group":
+							FacebookDesktop.api("/search?q="+searchbar.text+"&type=group&", getResults);
+							break;
+					}
+				}
+			}
+			
+			protected function getResults(success:Object,fail:Object):void {
+				if(currentState == "loggedin") {
+					if(success) {
+						
+						for(var i:int;tmpResultArrayCollection.length<MaxResultSize && i<MaxResultSize;i++) {
+							if(checkSearchObjectType(success[i])) {
+								tmpResultArrayCollection.addItem(success[i]);
+								if(!imageURLMap[success[i].id])
+									imageURLMap[success[i].id] = FacebookDesktop.getImageUrl(success[i].id,"large");
+								tmpURLArrayCollection.addItem(imageURLMap[success[i].id]);
+							}
+						}
+						
+						if(tmpResultArrayCollection.length<MaxResultSize && FacebookDesktop.hasNext(success)) {
+							FacebookDesktop.nextPage(success,addToGetResults);
+						} else {
+							loadingTimer.stop();
+							loadingTimer.reset();
+							
+							if(tmpResultArrayCollection.length > 0) {
+								for(var i:int=tmpURLArrayCollection.length;i<MaxResultSize;i++) {
+									tmpURLArrayCollection.addItem("");
+								}
+								resultShelf.selectedIndex = 0;
+								resultURLArrayCollection = new ArrayCollection(tmpURLArrayCollection.toArray()); 
+								tmpURLArrayCollection = new ArrayCollection();
+								resultArrayCollection = new ArrayCollection(tmpResultArrayCollection.toArray());
+								tmpResultArrayCollection = new ArrayCollection();
+								
+								if(selectedSource == 1 || selectedSource == -1){
+									selectedSource = 1;
+									selectedIndex = 0;
+									noResultImage.visible = false;
+									loading1Image.visible = false;
+									loading2Image.visible = false;
+									loading3Image.visible = false;
+									resultList.selectedIndex = selectedIndex;
+									resultList.ensureIndexIsVisible(selectedIndex);
+									selectedID = resultArrayCollection.getItemAt(selectedIndex).id;
+									selectedNameLabel.text = resultArrayCollection.getItemAt(selectedIndex).name;
+									enableShelfBySource();
+									manageInformationContainer();
+								}
+							} else {
+								resultArrayCollection.removeAll();
+								var noResultEntry:Object = new Object();
+								noResultEntry.name = "No result";
+								noResultEntry.noResult = true;
+								resultArrayCollection.addItem(noResultEntry);
+								if(selectedSource==1 || selectedSource==-1) {
+									selectedSource = -1;
+									selectedIndex = -1;
+									selectedID = "-1";
+									noResultImage.visible = true;
+									loading1Image.visible = false;
+									loading2Image.visible = false;
+									loading3Image.visible = false;
+									manageInformationContainer();
+								}
+							}
+							
+							searchbar.enabled = true;
+							//search.enabled = true;
+							//allButton.enabled = true;
+							peopleButton.enabled = true;
+							pageButton.enabled = true;
+							eventButton.enabled = true;
+							groupButton.enabled = true;
+						}
+					}
+				}
+			}
+			
+			protected function addToGetResults(success:Object,fail:Object):void {
+				if(currentState == "loggedin") {
+					if(success) {
+						for(var i:int;tmpResultArrayCollection.length<MaxResultSize && i<MaxResultSize;i++) {
+							if(checkSearchObjectType(success[i])) {
+								tmpResultArrayCollection.addItem(success[i]);
+								if(!imageURLMap[success[i].id])
+									imageURLMap[success[i].id] = FacebookDesktop.getImageUrl(success[i].id,"large");
+								tmpURLArrayCollection.addItem(imageURLMap[success[i].id]);
+							}
+						}
+						
+						if(tmpResultArrayCollection.length<MaxResultSize && FacebookDesktop.hasNext(success)) {
+							FacebookDesktop.nextPage(success,addToGetResults);
+						} else {
+							loadingTimer.stop();
+							loadingTimer.reset();
+							
+							if(tmpResultArrayCollection.length > 0) {
+								for(var i:int=tmpURLArrayCollection.length;i<MaxResultSize;i++) {
+									tmpURLArrayCollection.addItem("");
+								}
+								resultShelf.selectedIndex = 0;
+								resultURLArrayCollection = new ArrayCollection(tmpURLArrayCollection.toArray()); 
+								tmpURLArrayCollection = new ArrayCollection();
+								resultArrayCollection = new ArrayCollection(tmpResultArrayCollection.toArray());
+								tmpResultArrayCollection = new ArrayCollection();
+								
+								if(selectedSource == 1 || selectedSource == -1){
+									noResultImage.visible = false;
+									loading1Image.visible = false;
+									loading2Image.visible = false;
+									loading3Image.visible = false;
+									selectedSource = 1;
+									selectedIndex = 0;
+									resultList.selectedIndex = selectedIndex;
+									resultList.ensureIndexIsVisible(selectedIndex);
+									selectedID = resultArrayCollection.getItemAt(selectedIndex).id;
+									selectedNameLabel.text = resultArrayCollection.getItemAt(selectedIndex).name;
+									enableShelfBySource();
+									manageInformationContainer();
+								}
+							} else {
+								resultArrayCollection.removeAll();
+								var noResultEntry:Object = new Object();
+								noResultEntry.name = "No result";
+								noResultEntry.noResult = true;
+								resultArrayCollection.addItem(noResultEntry);
+								if(selectedSource==1 || selectedSource==-1) {
+									selectedSource = -1;
+									selectedIndex = -1;
+									selectedID = "-1";
+									noResultImage.visible = true;
+									loading1Image.visible = false;
+									loading2Image.visible = false;
+									loading3Image.visible = false;
+									manageInformationContainer();
+								}
+							}
+							
+							searchbar.enabled = true;
+							//search.enabled = true;
+							//allButton.enabled = true;
+							peopleButton.enabled = true;
+							pageButton.enabled = true;
+							eventButton.enabled = true;
+							groupButton.enabled = true;
+						}
+					}
+				}
+			}
+			
+			protected function loadingUpdate(e:Event):void {
+				if(resultArrayCollection.getItemAt(0).loading) {
+					switch(resultArrayCollection.getItemAt(0).name){
+						case "Loading.":
+						{
+							if(selectedSource == -1 && !noResultImage.visible) {
+								noResultImage.visible = false;
+								loading1Image.visible = false;
+								loading2Image.visible = true;
+								loading3Image.visible = false;
+							}
+							resultArrayCollection.removeAll();
+							var loadingEntry:Object = new Object();
+							loadingEntry.loading = true;
+							loadingEntry.name = "Loading..";
+							resultArrayCollection.addItem(loadingEntry);
+							break;
+						}
+						case "Loading..":
+						{
+							if(selectedSource == -1 && !noResultImage.visible) {
+								noResultImage.visible = false;
+								loading1Image.visible = false;
+								loading2Image.visible = false;
+								loading3Image.visible = true;
+							}
+							resultArrayCollection.removeAll();
+							var loadingEntry:Object = new Object();
+							loadingEntry.loading = true;
+							loadingEntry.name = "Loading...";
+							resultArrayCollection.addItem(loadingEntry);
+							break;
+						}
+						case "Loading...":
+						{
+							if(selectedSource == -1 && !noResultImage.visible) {
+								noResultImage.visible = false;
+								loading1Image.visible = true;
+								loading2Image.visible = false;
+								loading3Image.visible = false;
+							}
+							resultArrayCollection.removeAll();
+							var loadingEntry:Object = new Object();
+							loadingEntry.loading = true;
+							loadingEntry.name = "Loading.";
+							resultArrayCollection.addItem(loadingEntry);
+							break;
+						}
+						default:
+						{
+							break;
+						}
+					}
+				}
+				loadingTimer.reset();
+				loadingTimer.start();
+			}
+			
+			protected function checkSearchObjectType(searchObject:Object):Boolean {
+				if(searchObject) {
+					if(searchObject.type == null ||
+						searchObject.type == "user" ||
+						searchObject.type == "page" ||
+						searchObject.type == "event" ||
+						searchObject.type == "group" )
+						return true;
+				}
+				
+				return false;
+			}
+			
+			protected function manageInformationContainer():void{
+				basicUserInfoList.visible=false;
+				basicUserInfoList.enabled=false;
+				basicGroupInfoList.visible=false;
+				basicGroupInfoList.enabled=false;
+				basicEventInfoList.visible=false;
+				basicEventInfoList.enabled=false;
+				basicPageInfoList.visible=false;
+				basicPageInfoList.enabled=false;
+				openBrowserButton.visible = false;
+				toggleBucketButton.visible = false;
+				if(selectedID!='-1') {
+					FacebookDesktop.api("/"+selectedID,getFullInfo);
+				}else {
+					infoContainer.visible = false;
+					infoContainer.enabled = false;
+					infoContainer.mouseEnabled = false;
+					openBrowserButton.visible = false;
+					toggleBucketButton.visible = false;
+					basicInfoArrayCollection.removeAll();
+				}
+			}
+			
+			protected function getFullInfo(success:Object,fail:Object):void {
+				if(success){
+					basicInfoArrayCollection.removeAll();
+					moreInfoArrayCollection.removeAll();
+					if(success.hasOwnProperty('start_time')){
+						basicUserInfoList.visible=false;
+						basicUserInfoList.enabled=false;
+						basicGroupInfoList.visible=false;
+						basicGroupInfoList.enabled=false;
+						basicEventInfoList.visible=true;
+						basicEventInfoList.enabled=true;
+						basicPageInfoList.visible=false;
+						basicPageInfoList.enabled=false;
+						moreUserInfoList.visible=false;
+						moreUserInfoList.enabled=false;
+						moreGroupInfoList.visible=false;
+						moreGroupInfoList.enabled=false;
+						moreEventInfoList.visible=true;
+						moreEventInfoList.visible=true;
+						moreGroupLabel.visible=false;
+						moreEventLabel.visible=true;
+						userPostList.visible=false;
+						pagePostList.visible=false;
+						groupPostList.visible=false;
+						eventPostList.visible=true;
+						recentPostLabel.visible=true;
+						recentPagePostLabel.visible=false;
+						selectedIDtype = "event";
+						FacebookDesktop.api("/"+selectedID+"/attending/",getMoreInfoPeople);
+						FacebookDesktop.api("/"+selectedID+"/feed",getRecentPosts);
+					}
+					else if(success.hasOwnProperty('icon')){
+						basicUserInfoList.visible=false;
+						basicUserInfoList.enabled=false;
+						basicGroupInfoList.visible=true;
+						basicGroupInfoList.enabled=true;
+						basicEventInfoList.visible=false;
+						basicEventInfoList.enabled=false;
+						basicPageInfoList.visible=false;
+						basicPageInfoList.enabled=false;
+						moreUserInfoList.visible=false;
+						moreUserInfoList.enabled=false;
+						moreGroupInfoList.visible=true;
+						moreGroupInfoList.enabled=true;
+						moreEventInfoList.visible=false;
+						moreEventInfoList.visible=false;
+						moreEventLabel.visible=false;
+						moreGroupLabel.visible=true;
+						userPostList.visible=false;
+						pagePostList.visible=false;
+						groupPostList.visible=true;
+						eventPostList.visible=false;
+						recentPostLabel.visible=true;
+						recentPagePostLabel.visible=false;
+						selectedIDtype = "group";
+						FacebookDesktop.api("/"+selectedID+"/members/",getMoreInfoPeople);
+						FacebookDesktop.api("/"+selectedID+"/feed",getRecentPosts);
+					}
+					else if(success.hasOwnProperty('category')){
+						basicUserInfoList.visible=false;
+						basicUserInfoList.enabled=false;
+						basicGroupInfoList.visible=false;
+						basicGroupInfoList.enabled=false;
+						basicEventInfoList.visible=false;
+						basicEventInfoList.enabled=false;
+						basicPageInfoList.visible=true;
+						basicPageInfoList.enabled=true;
+						moreUserInfoList.visible=false;
+						moreUserInfoList.enabled=false;
+						moreGroupInfoList.visible=false;
+						moreGroupInfoList.enabled=false;
+						moreEventInfoList.visible=false;
+						moreEventInfoList.visible=false;
+						userPostList.visible=false;
+						pagePostList.visible=true;
+						groupPostList.visible=false;
+						eventPostList.visible=false;
+						recentPostLabel.visible=false;
+						recentPagePostLabel.visible=true;
+						selectedIDtype = "page";
+						FacebookDesktop.api("/"+selectedID+"/feed",getRecentPosts);
+						
+					}
+					else if(success.hasOwnProperty('gender')){
+						basicUserInfoList.visible=true;
+						basicUserInfoList.enabled=true;
+						basicGroupInfoList.visible=false;
+						basicGroupInfoList.enabled=false;
+						basicEventInfoList.visible=false;
+						basicEventInfoList.enabled=false;
+						basicPageInfoList.visible=false;
+						basicPageInfoList.enabled=false;
+						moreUserInfoList.visible=true;
+						moreUserInfoList.enabled=true;
+						moreGroupInfoList.visible=false;
+						moreGroupInfoList.enabled=false;
+						moreEventInfoList.visible=false;
+						moreEventInfoList.visible=false;
+						userPostList.visible=true;
+						pagePostList.visible=false;
+						groupPostList.visible=false;
+						eventPostList.visible=false;
+						recentPostLabel.visible=true;
+						recentPagePostLabel.visible=false;
+						selectedIDtype = "user";
+						FacebookDesktop.api("/"+selectedID+"/posts",getRecentPosts);
+						moreInfoArrayCollection.addItem(success);
+					}
+					basicInfoArrayCollection.addItem(success);
+
+					
+					
+					
+					infoContainer.visible = true;
+					infoContainer.enabled = true;
+					infoContainer.mouseEnabled = true;
+					
+					isSelectedInBucket = checkSelectedInBucket();
+					if(isSelectedInBucket) {
+						toggleBucketButton.label = "Remove fom Bookmarks"
+					}else {
+						toggleBucketButton.label = "Add to Bookmarks"
+					}
+					
+					toggleBucketButton.visible = true;
+					openBrowserButton.visible = true;
+				}
+				
+			}
+			
+			protected function getMoreInfoPeople(success:Object,fail:Object):void{
+				if(success){
+					moreInfoPeopleArrayCollection.removeAll();
+					for(var i:int; i<success.length; i++){
+						if(success[i])
+							moreInfoPeopleArrayCollection.addItem(success[i]);
+					}
+				}
+			}
+
+			protected function getRecentPosts(success:Object, fail:Object):void{
+				if(success){
+					recentPostsArrayCollection.removeAll();
+					for(var i:int; i<success.length; i++){
+						if(success[i])
+							recentPostsArrayCollection.addItem(success[i]);
+					}
+				}
+			}
+			
+			protected function searchbarChangeHandler(event:TextOperationEvent):void {
+				searchTextEntered = true;
+			}
+			
+			protected function searchbarFocusInHandler(event:FocusEvent):void {
+				if(!searchTextEntered || searchbar.text== "") {
+					searchbar.removeEventListener(TextOperationEvent.CHANGE,searchbarChangeHandler,false);
+					searchbar.text = "";
+					searchbar.addEventListener(TextOperationEvent.CHANGE,searchbarChangeHandler,false,0,true);	
+				}
+			}
+			
+			protected function searchbarFocusOutHandler(event:FocusEvent):void {
+				if(!searchTextEntered || searchbar.text== "") {
+					searchTextEntered = false;
+					searchbar.removeEventListener(TextOperationEvent.CHANGE,searchbarChangeHandler,false);
+					searchbar.text = "Search";
+					searchbar.addEventListener(TextOperationEvent.CHANGE,searchbarChangeHandler,false,0,true);	
+				}
+			}
+			
+			protected function allButtonClickHandler(event:MouseEvent):void{
+				searchType = "all";
+				searchClickHandler(event);
+			}
+			
+			protected function peopleButtonClickHandler(event:MouseEvent):void {
+				searchType = "user";
+				searchClickHandler(event);
+			}
+			
+			protected function groupButtonClickHandler(event:MouseEvent):void {
+				searchType = "group";
+				searchClickHandler(event);
+			}
+			
+			protected function pageButtonClickHandler(event:MouseEvent):void{
+				searchType = "page";
+				searchClickHandler(event);
+			}
+			
+			protected function eventButtonClickHandler(event:MouseEvent):void{
+				searchType = "event";
+				searchClickHandler(event);
+			}
+			
+			protected function drawerDownImageClickHandler(event:MouseEvent):void{
+				if(mainContainer.top <= 70) {
+					drawerDownImage.visible = false;
+					drawerDownImage.enabled = false;
+					drawerDownImage.mouseEnabled = false;
+					drawerUpImage.visible = false;
+					drawerUpImage.enabled = false;
+					drawerUpImage.mouseEnabled = false;
+					drawerMovingImage.visible = true;
+					drawerMovingImage.enabled = true;
+					drawerMovingImage.mouseEnabled = true;
+					drawerTimer.addEventListener(TimerEvent.TIMER, drawerDownUpdate);
+					drawerTimer.reset();
+					drawerTimer.start();
+				}
+			}
+			
+			protected function drawerDownUpdate(e:Event):void {
+				mainContainer.top = mainContainer.top + 2;
+				shelfFrame.top = (Number)(shelfFrame.top) - 1;
+				if(mainContainer.top < 226) {
+					drawerTimer.reset();
+					drawerTimer.start();
+				}else {
+					drawerTimer.removeEventListener(TimerEvent.TIMER,drawerDownUpdate);
+					mainContainer.top = 226;
+					drawerTimer.stop();
+					drawerTimer.reset();
+					drawerDownImage.visible = false;
+					drawerDownImage.enabled = false;
+					drawerDownImage.mouseEnabled = false;
+					drawerUpImage.visible = true;
+					drawerUpImage.enabled = true;
+					drawerUpImage.mouseEnabled = true;
+					drawerMovingImage.visible = false;
+					drawerMovingImage.enabled = false;
+					drawerMovingImage.mouseEnabled = false;
+				}
+			}
+			
+			protected function drawerUpImageClickHandler(event:MouseEvent):void{
+				if(mainContainer.top >= 226) {
+					drawerDownImage.visible = false;
+					drawerDownImage.enabled = false;
+					drawerDownImage.mouseEnabled = false;
+					drawerUpImage.visible = false;
+					drawerUpImage.enabled = false;
+					drawerUpImage.mouseEnabled = false;
+					drawerMovingImage.visible = true;
+					drawerMovingImage.enabled = true;
+					drawerMovingImage.mouseEnabled = true;
+					drawerTimer.addEventListener(TimerEvent.TIMER, drawerUpUpdate);
+					drawerTimer.reset();
+					drawerTimer.start();
+				}
+			}
+			
+			protected function drawerUpUpdate(e:Event):void {
+				mainContainer.top = (Number)(mainContainer.top) - 2;
+				shelfFrame.top = (Number)(shelfFrame.top) + 1;
+				if(mainContainer.top > 70) {
+					drawerTimer.reset();
+					drawerTimer.start();
+				}else {
+					drawerTimer.removeEventListener(TimerEvent.TIMER,drawerUpUpdate);
+					mainContainer.top = 70;
+					drawerTimer.stop();
+					drawerTimer.reset();
+					drawerDownImage.visible = true;
+					drawerDownImage.enabled = true;
+					drawerDownImage.mouseEnabled = true;
+					drawerUpImage.visible = false;
+					drawerUpImage.enabled = false;
+					drawerUpImage.mouseEnabled = false;
+					drawerMovingImage.visible = false;
+					drawerMovingImage.enabled = false;
+					drawerMovingImage.mouseEnabled = false;
+				}
+			}
+			
+			protected function openBrowserButtonClickHandler(event:MouseEvent):void{
+				if(selectedID != "-1") {
+					var req:URLRequest = new URLRequest("http://www.facebook.com/"+selectedID);
+					navigateToURL(req);
+				}
+				
+			}
+			
+			protected function checkSelectedInBucket():Boolean {
+				if(selectedID != "-1") {
+					for(var i:int=0;i<bucketArrayCollection.length;i++) {
+						if(bucketArrayCollection.getItemAt(i)) {
+							if(bucketArrayCollection.getItemAt(i).id == selectedID) {
+								isSelectedInBucketIndex = i;
+								return true;
+							}
+						} else {
+							return false;
+						}
+					}
+				}
+				
+				return false;
+			}
+			
+			protected function toggleBucketButtonClickHandler(event:MouseEvent):void {
+				if(selectedID!="-1") {
+					if(!isSelectedInBucket && bucketArrayCollection.length < MaxResultSize) {
+						if(bucketArrayCollection.length == 1 && bucketArrayCollection.getItemAt(0).noItem)
+							bucketArrayCollection.removeAll();
+						
+						var item:Object = new Object();
+						item.id = null;
+						item.name = null;
+						var url:String;
+						switch(selectedSource)
+						{
+							case 0:
+								item.name = FacebookDesktop.getSession().user.name;
+								item.id = FacebookDesktop.getSession().user.id;
+								url = new String(profileURLArrayCollection.getItemAt(0));
+								break;
+							case 1:
+								for(var i:int=0;item.id == null && i<resultArrayCollection.length;i++)
+									if(resultArrayCollection.getItemAt(i).id == selectedID) {
+										item.id = resultArrayCollection.getItemAt(i).id;
+										item.name = resultArrayCollection.getItemAt(i).name;
+										url = new String(resultURLArrayCollection.getItemAt(i));
+									}
+								break;
+							default:
+								break;
+						}
+						if(item.id) {
+							var addToIndex:int = -1;
+							for(var i:int=0;addToIndex == -1 && i<bucketArrayCollection.length;i++) {
+								if(bucketArrayCollection.getItemAt(i).name > item.name) {
+									addToIndex = i;
+								}
+							}
+							if(addToIndex==-1) {
+								addToIndex = bucketArrayCollection.length;
+							}
+							
+							bucketArrayCollection.addItemAt(item,addToIndex);
+							bucketURLArrayCollection.addItemAt(url,addToIndex);
+							if(bucketURLArrayCollection.length > MaxResultSize) {
+								bucketURLArrayCollection.removeItemAt(MaxResultSize)
+							} else if(bucketURLArrayCollection.length < MaxResultSize) {
+								while(bucketURLArrayCollection.length != MaxResultSize) {
+									bucketURLArrayCollection.addItem("");
+								}
+							}
+							isSelectedInBucket = true;
+							toggleBucketButton.label = "Remove fom Bookmarks";
+							
+							writeBucketToFile();
+							return;
+						}
+						
+					}else if(isSelectedInBucket){
+						var removeFromIndex:int = isSelectedInBucketIndex;
+						
+						if(removeFromIndex==-1) {
+							isSelectedInBucket = true;
+							toggleBucketButton.label = "Remove fom Bookmarks";
+							return;
+						}
+						
+						bucketArrayCollection.removeItemAt(removeFromIndex);
+						if(bucketArrayCollection.length == 0) {
+							var noItemEntry:Object = new Object();
+							noItemEntry.name = "No item";
+							noItemEntry.noItem = true;
+							bucketArrayCollection.addItem(noItemEntry);
+							bucketList.selectedIndex = -1;
+							
+							selectedSource = 0;
+							selectedIndex = 0;
+							selectedID = FacebookDesktop.getSession().uid;
+							selectedNameLabel.text = FacebookDesktop.getSession().user.name;
+							profileShelf.selectedIndex = 0;
+							enableShelfBySource();
+							manageInformationContainer();
+						} 
+						
+						bucketURLArrayCollection.addItem("");
+						bucketURLArrayCollection.removeItemAt(removeFromIndex);
+						if(bucketURLArrayCollection.length > MaxResultSize) {
+							bucketURLArrayCollection.removeItemAt(MaxResultSize)
+						} else if(bucketURLArrayCollection.length < MaxResultSize) {
+							while(bucketURLArrayCollection.length != MaxResultSize) {
+								bucketURLArrayCollection.addItem("");
+							}
+						}
+						
+						if(selectedSource == 2) {
+							if(removeFromIndex == bucketArrayCollection.length) {
+								removeFromIndex = bucketArrayCollection.length - 1;
+							}
+							selectedSource = 2;
+							selectedIndex = removeFromIndex;
+							selectedID = bucketArrayCollection.getItemAt(removeFromIndex).id;
+							selectedNameLabel.text = bucketArrayCollection.getItemAt(removeFromIndex).name;
+							bucketShelf.selectedIndex = removeFromIndex;
+							bucketList.selectedIndex = removeFromIndex;
+							enableShelfBySource();
+							manageInformationContainer();
+						}
+						
+						isSelectedInBucket = false;
+						toggleBucketButton.label = "Add to Bookmarks";
+						writeBucketToFile();
+						return;
+					}
+				}
+			}
+			
+			protected function writeBucketToFile():void {
+				var bucketFile:File = File.userDirectory;
+				bucketFile = bucketFile.resolvePath(DefaultBucketFileName+"_"+FacebookDesktop.getSession().uid);
+				fscommand("save",bucketFile.nativePath);
+				if(bucketArrayCollection.length == 0 || (bucketArrayCollection.length == 1 && bucketArrayCollection.getItemAt(0).noItem)) {
+					var stream:FileStream = new FileStream();
+					stream.open(bucketFile, FileMode.WRITE);
+					stream.close();
+					return;
+				}
+				var stream:FileStream = new FileStream();
+				stream.open(bucketFile, FileMode.WRITE);
+				for(var i:int=0;i<bucketArrayCollection.length;i++) {
+					stream.writeUTFBytes(bucketArrayCollection.getItemAt(i).id);
+					if(i!=bucketArrayCollection.length-1) {
+						stream.writeUTFBytes("\r\n");
+					}
+				}
+			}
+			
+			protected function readBucketFromFile():void {
+				var bucketFile:File = File.userDirectory;
+				bucketFile = bucketFile.resolvePath(DefaultBucketFileName+"_"+FacebookDesktop.getSession().uid);
+				if(bucketFile.exists) {
+					var stream:FileStreamWithLineReader = new FileStreamWithLineReader();
+					stream.open(bucketFile, FileMode.READ);
+					bucketArrayCollection.removeAll();
+					bucketURLArrayCollection.removeAll();
+					for(var i:int=bucketURLArrayCollection.length;i<MaxResultSize;i++) {
+						bucketURLArrayCollection.addItem("");
+					}
+					var isEmpty:Boolean = true;
+					while(stream.bytesAvailable) {
+						isEmpty = false;
+						var id:String = stream.readUTFLine();
+						FacebookDesktop.api("/"+id,addToBucketHandler);
+					}
+					
+					if(isEmpty) {
+						var noItemEntry:Object = new Object();
+						noItemEntry.name = "No item";
+						noItemEntry.noItem = true;
+						bucketArrayCollection.addItem(noItemEntry);
+					}
+				}
+			}
+			
+			protected function addToBucketHandler(success:Object,fail:Object):void {
+				if(success){
+					bucketArrayCollection.addItem(success);
+					bucketURLArrayCollection.setItemAt(FacebookDesktop.getImageUrl(success.id,"large"),bucketArrayCollection.length-1);
+				}
+			}
+			
+			protected function helpButton_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var req:URLRequest = new URLRequest("http://www.columbia.edu/~rmb2189/help.pdf");
+				navigateToURL(req);
+			}
+			
+		]]></fx:Script>
+</s:WindowedApplication>
